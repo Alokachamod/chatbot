@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novis Bot</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-app-wrapper">
+        <!-- Main Chat Window Card -->
+        <div class="chat-window shadow-lg">
+            
+            <!-- Navbar / Header -->
+            <header class="chat-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-container">
+                        <div class="bot-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <span class="online-indicator" title="Online"></span>
+                    </div>
+                    <div>
+                        <h1 class="nav-title mb-0">Novis Bot</h1>
+                        <div class="status-subtitle d-flex align-items-center gap-1">
+                            <span class="status-dot"></span>
+                            <span>AI Assistant &bull; Online</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-actions d-flex align-items-center gap-2">
+                    <button type="button" id="clearChatBtn" class="header-btn" title="Clear Conversation">
+                        <i class="bi bi-trash3"></i>
+                        <span class="d-none d-sm-inline">Clear</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Message Box -->
+            <main class="chat-body" id="chatBox">
+                <!-- Messages will be appended here dynamically via your API/Script -->
+            </main>
+
+            <!-- Footer / Input Form -->
+            <footer class="chat-footer">
+                <form id="chatForm" class="chat-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        class="chat-input" 
+                        placeholder="Type your message here..." 
+                        autocomplete="off" 
+                        required
+                    >
+                    <button type="submit" id="sendBtn" class="send-btn" title="Send message">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </form>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Custom Chatbot Script -->
+    <script src="script.js"></script>
+</body>
+</html>
