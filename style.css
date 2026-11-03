@@ -1,12 +1,15 @@
-
+/* ==========================================================================
+   Novis Bot - Complete AI Chatbot UI & Animations
+   Theme: Cyberpunk Dark / Neon Emerald Accent
+   ========================================================================== */
 
 :root {
     --bg-main: #0d1117;
-    --bg-card: rgba(18, 24, 38, 0.88);
+    --bg-card: rgba(18, 24, 38, 0.92);
     --bg-header: rgba(12, 17, 27, 0.95);
     --bg-footer: rgba(12, 17, 27, 0.95);
     --bg-bot-msg: #161f30;
-    --border-bot-msg: rgba(0, 255, 136, 0.15);
+    --border-bot-msg: rgba(0, 255, 136, 0.18);
     
     --accent-neon: #00ff88;
     --accent-neon-dim: rgba(0, 255, 136, 0.15);
@@ -72,7 +75,9 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 255, 136, 0.12);
 }
 
-
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
 .chat-header {
     background: var(--bg-header);
     padding: 16px 24px;
@@ -169,14 +174,31 @@ body {
     gap: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .header-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(0, 255, 136, 0.35);
 }
 
+.key-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ef4444; /* Default red/unconfigured */
+    display: inline-block;
+}
+
+.key-status-dot.configured {
+    background-color: var(--accent-neon);
+    box-shadow: 0 0 6px var(--accent-neon);
+}
+
+/* ==========================================================================
+   Chat Messages Body Area
+   ========================================================================== */
 .chat-body {
     flex: 1;
     overflow-y: auto;
@@ -205,14 +227,74 @@ body {
     background: rgba(0, 255, 136, 0.35);
 }
 
+/* Welcome Card */
+.welcome-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 24px 20px;
+    max-width: 620px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.welcome-icon {
+    font-size: 2.2rem;
+    color: var(--accent-neon);
+    filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.45));
+}
+
+.welcome-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #ffffff;
+}
+
+.welcome-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+.prompt-chips {
+    gap: 8px;
+}
+
+.prompt-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 255, 136, 0.22);
+    color: var(--text-primary);
+    padding: 7px 14px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.prompt-chip:hover {
+    background: var(--accent-neon-dim);
+    border-color: var(--accent-neon);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Message Rows & Bubbles
+   ========================================================================== */
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
 
 .message-row {
     display: flex;
     gap: 12px;
-    max-width: 82%;
+    max-width: 84%;
     animation: fadeInMsg 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 
 @keyframes fadeInMsg {
     from {
@@ -285,6 +367,50 @@ body {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
+.bot-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.bot-bubble strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.bot-bubble code {
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--accent-neon);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 0.88rem;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.bot-bubble pre {
+    background: #0b0f17;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    overflow-x: auto;
+}
+
+.bot-bubble pre code {
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: #e5e7eb;
+    font-size: 0.85rem;
+}
+
+.bot-bubble ul, .bot-bubble ol {
+    margin-bottom: 8px;
+    padding-left: 20px;
+}
+
+.bot-bubble li {
+    margin-bottom: 4px;
+}
+
 /* User Bubble Styling */
 .user-bubble {
     background: var(--user-gradient);
@@ -307,7 +433,24 @@ body {
     color: var(--text-muted);
 }
 
+.copy-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+}
 
+.copy-btn:hover {
+    color: var(--accent-neon);
+}
+
+/* ==========================================================================
+   Typing Indicator & Animation
+   ========================================================================== */
 .typing-indicator-row {
     display: flex;
     align-items: center;
@@ -355,9 +498,12 @@ body {
     }
 }
 
+/* ==========================================================================
+   Footer & Input Form
+   ========================================================================== */
 .chat-footer {
     background: var(--bg-footer);
-    padding: 16px 24px 20px;
+    padding: 16px 24px 16px;
     border-top: 1px solid var(--border-subtle);
     border-bottom-left-radius: 24px;
     border-bottom-right-radius: 24px;
@@ -411,17 +557,71 @@ body {
     flex-shrink: 0;
 }
 
-.send-btn:hover {
+.send-btn:hover:not(:disabled) {
     transform: scale(1.06);
     background: #15ff92;
     box-shadow: 0 0 18px rgba(0, 255, 136, 0.6);
 }
 
-.send-btn:active {
-    transform: scale(0.96);
+.send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
+.footer-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
 
+/* ==========================================================================
+   API Key Modal Styling
+   ========================================================================== */
+.api-modal-card {
+    background: #111827;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 255, 136, 0.2);
+    color: #ffffff;
+}
+
+.api-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.9rem;
+}
+
+.api-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-neon);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.toggle-key-btn {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+}
+
+.toggle-key-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.get-key-link {
+    color: var(--accent-neon);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.get-key-link:hover {
+    text-decoration: underline;
+    color: #22c55e;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
 @media (max-width: 768px) {
     .chat-app-wrapper {
         height: 100vh;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novis Bot</title>
+    <title>Novis Bot - AI Chatbot</title>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <!-- Google Fonts -->
@@ -35,12 +35,19 @@
                         <h1 class="nav-title mb-0">Novis Bot</h1>
                         <div class="status-subtitle d-flex align-items-center gap-1">
                             <span class="status-dot"></span>
-                            <span>AI Assistant &bull; Online</span>
+                            <span id="botStatusText">AI Assistant &bull; Online</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="header-actions d-flex align-items-center gap-2">
+                    <!-- API Key Settings Button -->
+                    <button type="button" id="apiKeyBtn" class="header-btn" title="Gemini API Key Settings" data-bs-toggle="modal" data-bs-target="#apiKeyModal">
+                        <i class="bi bi-key-fill"></i>
+                        <span class="d-none d-sm-inline">API Key</span>
+                        <span class="key-status-dot" id="keyStatusBadge"></span>
+                    </button>
+                    <!-- Clear Chat Button -->
                     <button type="button" id="clearChatBtn" class="header-btn" title="Clear Conversation">
                         <i class="bi bi-trash3"></i>
                         <span class="d-none d-sm-inline">Clear</span>
@@ -50,7 +57,44 @@
 
             <!-- Chat Message Box -->
             <main class="chat-body" id="chatBox">
-                <!-- Messages will be appended here dynamically via your API/Script -->
+                <!-- Welcome Banner / Empty State -->
+                <div class="welcome-card text-center my-3" id="welcomeCard">
+                    <div class="welcome-icon mb-3">
+                        <i class="bi bi-stars"></i>
+                    </div>
+                    <h2 class="welcome-title">Welcome to Novis Bot</h2>
+                    <p class="welcome-text">
+                        Powered by Google Gemini. Ask questions, explore ideas, or debug code.
+                    </p>
+                    
+                    <!-- Quick Prompt Suggestions -->
+                    <div class="prompt-chips d-flex flex-wrap justify-content-center gap-2 mt-3">
+                        <button type="button" class="prompt-chip" data-prompt="What can you do as Novis Bot?">
+                            <i class="bi bi-lightbulb me-1"></i> What can you do?
+                        </button>
+                        <button type="button" class="prompt-chip" data-prompt="Write a clean JavaScript async/await fetch example with error handling.">
+                            <i class="bi bi-code-slash me-1"></i> JavaScript fetch example
+                        </button>
+                        <button type="button" class="prompt-chip" data-prompt="Explain how neural networks learn in simple terms.">
+                            <i class="bi bi-cpu me-1"></i> How neural networks work
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-list" id="messagesList"></div>
+
+                <!-- Typing / Thinking Indicator (Hidden by default) -->
+                <div class="typing-indicator-row d-none" id="typingIndicator">
+                    <div class="msg-avatar bot-avatar-small">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="typing-bubble">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
             </main>
 
             <!-- Footer / Input Form -->
@@ -64,16 +108,65 @@
                         autocomplete="off" 
                         required
                     >
-                    <button type="submit" onclick="sendBtn();" class="send-btn" title="Send message">
+                    <button type="submit" id="sendBtn" class="send-btn" title="Send message">
                         <i class="bi bi-send-fill"></i>
                     </button>
                 </form>
+                <div class="footer-note text-center mt-2">
+                    <small>Novis Bot &bull; Powered by Google Gemini 1.5 Flash</small>
+                </div>
             </footer>
 
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
+    <!-- API Key Modal -->
+    <div class="modal fade" id="apiKeyModal" tabindex="-1" aria-labelledby="apiKeyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content api-modal-card">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title d-flex align-items-center gap-2" id="apiKeyModalLabel">
+                        <i class="bi bi-shield-lock-fill text-success"></i> Gemini API Key
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-desc text-secondary small">
+                        Your API key is stored safely in your browser's <code>localStorage</code>. It is never committed to GitHub or shared.
+                    </p>
+                    <div class="mb-3">
+                        <label for="apiKeyInput" class="form-label text-light small fw-bold">API Key</label>
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                id="apiKeyInput" 
+                                class="form-control api-input" 
+                                placeholder="AIzaSy..." 
+                                autocomplete="off"
+                            >
+                            <button class="btn btn-outline-secondary toggle-key-btn" type="button" id="toggleKeyVisibility">
+                                <i class="bi bi-eye" id="toggleKeyIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="get-key-link small">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Get a free Gemini API key
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="removeKeyBtn">
+                            Remove Key
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm px-3" id="saveKeyBtn">Save Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!-- Custom Chatbot Script -->
     <script src="script.js"></script>
