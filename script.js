@@ -1,136 +1,85 @@
-/**
- * ============================================================================
- * Novis Bot - Complete AI Chatbot Script
- * ============================================================================
- * Features:
- * - Direct integration with Google Gemini 1.5 Flash API
- * - Multi-turn conversational memory (chat context)
- * - Safe LocalStorage API Key storage (prevents leaking secrets to Git)
- * - Dynamic markdown formatting (code blocks, bold, lists)
- * - Animated typing indicator and smooth auto-scrolling
- * - Quick prompt suggestion chips & clear chat support
- * ============================================================================
- */
-
 document.addEventListener("DOMContentLoaded", () => {
-    // DOM Elements
-    const chatForm = document.getElementById("chatForm");
-    const userInput = document.getElementById("userInput");
-    const sendBtn = document.getElementById("sendBtn");
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendBtn");
     const chatBox = document.getElementById("chatBox");
-    const messagesList = document.getElementById("messagesList");
-    const typingIndicator = document.getElementById("typingIndicator");
-    const welcomeCard = document.getElementById("welcomeCard");
-    const clearChatBtn = document.getElementById("clearChatBtn");
-    const promptChips = document.querySelectorAll(".prompt-chip");
+    const messageList = document.getElementById("messagesList");
+    const loading = document.getElementById("typingIndicator");
+    const welcome = document.getElementById("welcomeCard");
+    const clearButton = document.getElementById("clearChatBtn");
+    const chips = document.querySelectorAll(".prompt-chip");
 
-    // API Key Modal Elements
-    const apiKeyModalEl = document.getElementById("apiKeyModal");
-    const apiKeyModal = apiKeyModalEl ? new bootstrap.Modal(apiKeyModalEl) : null;
-    const apiKeyInput = document.getElementById("apiKeyInput");
-    const saveKeyBtn = document.getElementById("saveKeyBtn");
-    const removeKeyBtn = document.getElementById("removeKeyBtn");
-    const toggleKeyVisibility = document.getElementById("toggleKeyVisibility");
+    const modalElement = document.getElementById("apiKeyModal");
+    const keyModal = modalElement ? new bootstrap.Modal(modalElement) : null;
+    const keyInput = document.getElementById("apiKeyInput");
+    const saveKeyButton = document.getElementById("saveKeyBtn");
+    const removeKeyButton = document.getElementById("removeKeyBtn");
+    const toggleKeyButton = document.getElementById("toggleKeyVisibility");
     const toggleKeyIcon = document.getElementById("toggleKeyIcon");
-    const keyStatusBadge = document.getElementById("keyStatusBadge");
-    const botStatusText = document.getElementById("botStatusText");
+    const keyDot = document.getElementById("keyStatusBadge");
+    const statusText = document.getElementById("botStatusText");
 
-    const STORAGE_KEY = "novis_bot_gemini_api_key";
-    const GEMINI_MODEL = "gemini-1.5-flash";
+    const storageKey = "novis_bot_gemini_api_key";
+    const model = "gemini-3.5-flash";
+    let history = [];
 
-    // Conversation history for multi-turn context
-    let conversationHistory = [];
-
-    /**
-     * Get stored API key or return empty string
-     */
-    function getApiKey() {
-        return localStorage.getItem(STORAGE_KEY) || "";
+    function getKey() {
+        return localStorage.getItem(storageKey) || "";
     }
 
-    /**
-     * Update UI indicators based on API key availability
-     */
-    function updateKeyStatusUI() {
-        const key = getApiKey();
+    function updateKeyUI() {
+        const key = getKey();
         if (key && key.trim() !== "") {
-            keyStatusBadge.classList.add("configured");
-            keyStatusBadge.setAttribute("title", "API Key configured");
-            botStatusText.innerHTML = "AI Assistant &bull; Online";
-            if (apiKeyInput) apiKeyInput.value = key;
+            keyDot.classList.add("configured");
+            keyDot.setAttribute("title", "API Key configured");
+            statusText.innerHTML = "AI Assistant &bull; Online";
+            if (keyInput) keyInput.value = key;
         } else {
-            keyStatusBadge.classList.remove("configured");
-            keyStatusBadge.setAttribute("title", "API Key missing - click to configure");
-            botStatusText.innerHTML = "AI Assistant &bull; Key Required";
-            if (apiKeyInput) apiKeyInput.value = "";
+            keyDot.classList.remove("configured");
+            keyDot.setAttribute("title", "API Key missing");
+            statusText.innerHTML = "AI Assistant &bull; Key Required";
+            if (keyInput) keyInput.value = "";
         }
     }
 
-    /**
-     * Format current time as HH:MM AM/PM
-     */
-    function getCurrentTime() {
+    function getTime() {
         const now = new Date();
         return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     }
 
-    /**
-     * Smoothly scroll chat box to latest message
-     */
-    function scrollToBottom() {
+    function scrollBottom() {
         chatBox.scrollTo({
             top: chatBox.scrollHeight,
             behavior: "smooth"
         });
     }
 
-    /**
-     * Escape raw HTML
-     */
-    function escapeHtml(text) {
+    function cleanText(text) {
         const div = document.createElement("div");
         div.textContent = text;
         return div.innerHTML;
     }
 
-    /**
-     * Lightweight markdown parser for Gemini responses
-     */
-    function parseMarkdown(text) {
+    function formatText(text) {
         if (!text) return "";
+        let html = cleanText(text);
 
-        // Escape HTML first
-        let html = escapeHtml(text);
-
-        // Code blocks: ```language ... ```
         html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
             return `<pre><code class="language-${lang}">${code.trim()}</code></pre>`;
         });
 
-        // Inline code: `code`
         html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-        // Bold: **text**
         html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-
-        // Italic: *text*
         html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-
-        // Bullet lists: lines starting with * or -
         html = html.replace(/(?:^|\n)[*-] (.*?)(?=(?:\n[*-] )|\n\n|$)/g, "\n<li>$1</li>");
         html = html.replace(/((?:<li>.*?<\/li>\s*)+)/g, "<ul>$1</ul>");
-
-        // Line breaks (convert newlines not within tags to <br>)
         html = html.replace(/\n(?!(?:<\/ul>|<\/pre>|<li>))/g, "<br>");
 
         return html;
     }
 
-    /**
-     * Append a message bubble to the chat
-     */
-    function appendMessage(sender, text, isError = false) {
-        const time = getCurrentTime();
+    function addMessage(sender, text, isError = false) {
+        const time = getTime();
         const row = document.createElement("div");
         row.className = `message-row ${sender === "user" ? "user-row" : "bot-row"}`;
 
@@ -141,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="message-content">
                     <div class="message-bubble user-bubble">
-                        <p class="mb-0">${escapeHtml(text)}</p>
+                        <p class="mb-0">${cleanText(text)}</p>
                     </div>
                     <div class="message-meta">
                         <span class="message-time">${time}</span>
@@ -149,9 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
         } else {
-            const formattedContent = isError 
-                ? `<span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>${escapeHtml(text)}</span>` 
-                : parseMarkdown(text);
+            const content = isError 
+                ? `<span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>${cleanText(text)}</span>` 
+                : formatText(text);
 
             row.innerHTML = `
                 <div class="msg-avatar bot-avatar-small ${isError ? 'border-danger text-danger' : ''}">
@@ -159,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="message-content">
                     <div class="message-bubble bot-bubble ${isError ? 'border-danger' : ''}">
-                        ${formattedContent}
+                        ${content}
                     </div>
                     <div class="message-meta">
                         <span class="message-time">${time}</span>
@@ -171,93 +120,79 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            // Attach copy event listener
-            const copyBtn = row.querySelector(".copy-btn");
-            if (copyBtn) {
-                copyBtn.addEventListener("click", () => {
+            const copyButton = row.querySelector(".copy-btn");
+            if (copyButton) {
+                copyButton.addEventListener("click", () => {
                     navigator.clipboard.writeText(text).then(() => {
-                        copyBtn.innerHTML = `<i class="bi bi-check2 text-success"></i>`;
+                        copyButton.innerHTML = `<i class="bi bi-check2 text-success"></i>`;
                         setTimeout(() => {
-                            copyBtn.innerHTML = `<i class="bi bi-copy"></i>`;
+                            copyButton.innerHTML = `<i class="bi bi-copy"></i>`;
                         }, 2000);
-                    }).catch(err => console.error("Copy failed:", err));
+                    });
                 });
             }
         }
 
-        messagesList.appendChild(row);
-        scrollToBottom();
+        messageList.appendChild(row);
+        scrollBottom();
     }
 
-    /**
-     * Show/Hide animated typing indicator
-     */
-    function showTyping() {
-        typingIndicator.classList.remove("d-none");
-        scrollToBottom();
+    function showLoading() {
+        loading.classList.remove("d-none");
+        scrollBottom();
     }
 
-    function hideTyping() {
-        typingIndicator.classList.add("d-none");
+    function hideLoading() {
+        loading.classList.add("d-none");
     }
 
-    /**
-     * Toggle sending state (disable input & button while thinking)
-     */
-    function setThinking(isThinking) {
-        if (isThinking) {
-            showTyping();
-            sendBtn.disabled = true;
-            userInput.disabled = true;
+    function setLoading(isLoading) {
+        if (isLoading) {
+            showLoading();
+            sendButton.disabled = true;
+            input.disabled = true;
         } else {
-            hideTyping();
-            sendBtn.disabled = false;
-            userInput.disabled = false;
-            userInput.focus();
+            hideLoading();
+            sendButton.disabled = false;
+            input.disabled = false;
+            input.focus();
         }
     }
 
-    /**
-     * Send message to Google Gemini API
-     */
     async function sendMessage(userText) {
-        const apiKey = getApiKey();
+        const key = getKey();
 
-        // If no API key configured, prompt the user via modal
-        if (!apiKey || apiKey.trim() === "") {
-            appendMessage("bot", "Please configure your Google Gemini API key to start chatting. Click the 'API Key' button in the top right or use the settings dialog.", true);
-            if (apiKeyModal) {
-                apiKeyModal.show();
+        if (!key || key.trim() === "") {
+            addMessage("bot", "Please configure your Google Gemini API key to start chatting. Click the 'API Key' button in the top right.", true);
+            if (keyModal) {
+                keyModal.show();
             }
             return;
         }
 
-        // Hide welcome banner after first message
-        if (welcomeCard) {
-            welcomeCard.style.display = "none";
+        if (welcome) {
+            welcome.style.display = "none";
         }
 
-        // Append user bubble
-        appendMessage("user", userText);
+        addMessage("user", userText);
 
-        // Add to conversation history
-        conversationHistory.push({
+        history.push({
             role: "user",
             parts: [{ text: userText }]
         });
 
-        setThinking(true);
+        setLoading(true);
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey.trim()}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key.trim()}`;
 
         try {
-            const response = await fetch(endpoint, {
+            const res = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    contents: conversationHistory,
+                    contents: history,
                     generationConfig: {
                         temperature: 0.7,
                         maxOutputTokens: 1000
@@ -265,105 +200,89 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             });
 
-            const data = await response.json();
+            const data = await res.json();
 
-            if (!response.ok) {
-                const errorMsg = data.error?.message || `HTTP ${response.status}: Failed to generate response.`;
-                appendMessage("bot", `Gemini API Error: ${errorMsg}`, true);
-                // Rollback last question from history so it can be retried cleanly
-                conversationHistory.pop();
+            if (!res.ok) {
+                const errorText = data.error?.message || `Error ${res.status}: Failed to get response.`;
+                addMessage("bot", `Gemini API Error: ${errorText}`, true);
+                history.pop();
                 return;
             }
 
-            const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-            if (botReply) {
-                // Save model reply to conversation history
-                conversationHistory.push({
+            if (reply) {
+                history.push({
                     role: "model",
-                    parts: [{ text: botReply }]
+                    parts: [{ text: reply }]
                 });
-
-                appendMessage("bot", botReply);
+                addMessage("bot", reply);
             } else {
-                appendMessage("bot", "No response received. The output may have been filtered by safety settings.", true);
+                addMessage("bot", "No response received. The output may have been filtered.", true);
             }
 
-        } catch (error) {
-            console.error("Gemini API Request Error:", error);
-            appendMessage("bot", `Network Error: ${error.message || "Failed to connect to the Gemini API. Please check your internet connection or API key."}`, true);
-            conversationHistory.pop();
+        } catch (err) {
+            console.error(err);
+            addMessage("bot", `Network Error: ${err.message || "Failed to connect to the Gemini API."}`, true);
+            history.pop();
         } finally {
-            setThinking(false);
+            setLoading(false);
         }
     }
 
-    /**
-     * Form Submit Listener
-     */
-    chatForm.addEventListener("submit", (e) => {
+    form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const text = userInput.value.trim();
+        const text = input.value.trim();
         if (!text) return;
 
-        userInput.value = "";
+        input.value = "";
         sendMessage(text);
     });
 
-    /**
-     * Quick Prompt Chips Click
-     */
-    promptChips.forEach(chip => {
+    chips.forEach(chip => {
         chip.addEventListener("click", () => {
-            const promptText = chip.getAttribute("data-prompt") || chip.innerText.trim();
-            sendMessage(promptText);
+            const prompt = chip.getAttribute("data-prompt") || chip.innerText.trim();
+            sendMessage(prompt);
         });
     });
 
-    /**
-     * Clear Chat Listener
-     */
-    clearChatBtn.addEventListener("click", () => {
-        messagesList.innerHTML = "";
-        conversationHistory = [];
-        if (welcomeCard) {
-            welcomeCard.style.display = "block";
+    clearButton.addEventListener("click", () => {
+        messageList.innerHTML = "";
+        history = [];
+        if (welcome) {
+            welcome.style.display = "block";
         }
-        userInput.value = "";
-        userInput.focus();
+        input.value = "";
+        input.focus();
     });
 
-    /**
-     * API Key Modal Management
-     */
-    saveKeyBtn.addEventListener("click", () => {
-        const key = apiKeyInput.value.trim();
+    saveKeyButton.addEventListener("click", () => {
+        const key = keyInput.value.trim();
         if (key) {
-            localStorage.setItem(STORAGE_KEY, key);
-            updateKeyStatusUI();
-            if (apiKeyModal) apiKeyModal.hide();
-            appendMessage("bot", "API Key saved successfully! How can I assist you today? 😊");
+            localStorage.setItem(storageKey, key);
+            updateKeyUI();
+            if (keyModal) keyModal.hide();
+            addMessage("bot", "API Key saved successfully! How can I help you today? 😊");
         } else {
-            alert("Please enter a valid API key.");
+            alert("Please enter an API key.");
         }
     });
 
-    removeKeyBtn.addEventListener("click", () => {
+    removeKeyButton.addEventListener("click", () => {
         if (confirm("Are you sure you want to remove your saved API key?")) {
-            localStorage.removeItem(STORAGE_KEY);
-            updateKeyStatusUI();
-            if (apiKeyModal) apiKeyModal.hide();
-            appendMessage("bot", "API Key removed. You will need to provide an API key to chat with Novis Bot.", true);
+            localStorage.removeItem(storageKey);
+            updateKeyUI();
+            if (keyModal) keyModal.hide();
+            addMessage("bot", "API Key removed. You will need to provide an API key to chat with Novis Bot.", true);
         }
     });
 
-    toggleKeyVisibility.addEventListener("click", () => {
-        const isPassword = apiKeyInput.type === "password";
-        apiKeyInput.type = isPassword ? "text" : "password";
+    toggleKeyButton.addEventListener("click", () => {
+        const isPassword = keyInput.type === "password";
+        keyInput.type = isPassword ? "text" : "password";
         toggleKeyIcon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
     });
 
-    // Initialize UI on load
-    updateKeyStatusUI();
-    userInput.focus();
+    updateKeyUI();
+    input.focus();
 });

@@ -1,8 +1,3 @@
-/* ==========================================================================
-   Novis Bot - Complete AI Chatbot UI & Animations
-   Theme: Cyberpunk Dark / Neon Emerald Accent
-   ========================================================================== */
-
 :root {
     --bg-main: #0d1117;
     --bg-card: rgba(18, 24, 38, 0.92);
@@ -47,9 +42,6 @@ body {
     overflow: hidden;
 }
 
-/* ==========================================================================
-   Chat App Layout Wrapper
-   ========================================================================== */
 .chat-app-wrapper {
     width: 100%;
     max-width: 950px;
@@ -75,9 +67,6 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 255, 136, 0.12);
 }
 
-/* ==========================================================================
-   Header Section
-   ========================================================================== */
 .chat-header {
     background: var(--bg-header);
     padding: 16px 24px;
@@ -110,7 +99,6 @@ body {
     transform: scale(1.05);
 }
 
-/* Pulse Glow Animation */
 .online-indicator {
     position: absolute;
     bottom: -2px;
@@ -187,7 +175,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #ef4444; /* Default red/unconfigured */
+    background-color: #ef4444;
     display: inline-block;
 }
 
@@ -196,9 +184,6 @@ body {
     box-shadow: 0 0 6px var(--accent-neon);
 }
 
-/* ==========================================================================
-   Chat Messages Body Area
-   ========================================================================== */
 .chat-body {
     flex: 1;
     overflow-y: auto;
@@ -209,7 +194,6 @@ body {
     scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar */
 .chat-body::-webkit-scrollbar {
     width: 6px;
 }
@@ -227,7 +211,6 @@ body {
     background: rgba(0, 255, 136, 0.35);
 }
 
-/* Welcome Card */
 .welcome-card {
     background: rgba(255, 255, 255, 0.02);
     border: 1px dashed rgba(255, 255, 255, 0.14);
@@ -280,9 +263,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* ==========================================================================
-   Message Rows & Bubbles
-   ========================================================================== */
 .messages-list {
     display: flex;
     flex-direction: column;
@@ -358,7 +338,6 @@ body {
     position: relative;
 }
 
-/* Bot Bubble Styling */
 .bot-bubble {
     background: var(--bg-bot-msg);
     border: 1px solid var(--border-bot-msg);
@@ -411,7 +390,6 @@ body {
     margin-bottom: 4px;
 }
 
-/* User Bubble Styling */
 .user-bubble {
     background: var(--user-gradient);
     color: var(--user-text);
@@ -448,9 +426,6 @@ body {
     color: var(--accent-neon);
 }
 
-/* ==========================================================================
-   Typing Indicator & Animation
-   ========================================================================== */
 .typing-indicator-row {
     display: flex;
     align-items: center;
@@ -498,9 +473,6 @@ body {
     }
 }
 
-/* ==========================================================================
-   Footer & Input Form
-   ========================================================================== */
 .chat-footer {
     background: var(--bg-footer);
     padding: 16px 24px 16px;
@@ -573,9 +545,6 @@ body {
     color: var(--text-muted);
 }
 
-/* ==========================================================================
-   API Key Modal Styling
-   ========================================================================== */
 .api-modal-card {
     background: #111827;
     border: 1px solid rgba(0, 255, 136, 0.3);
@@ -619,9 +588,6 @@ body {
     color: #22c55e;
 }
 
-/* ==========================================================================
-   Responsive Adaptations
-   ========================================================================== */
 @media (max-width: 768px) {
     .chat-app-wrapper {
         height: 100vh;

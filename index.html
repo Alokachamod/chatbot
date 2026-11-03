@@ -4,25 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novis Bot - AI Chatbot</title>
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="chat-app-wrapper">
-        <!-- Main Chat Window Card -->
         <div class="chat-window shadow-lg">
             
-            <!-- Navbar / Header -->
             <header class="chat-header d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
                     <div class="avatar-container">
@@ -41,13 +34,11 @@
                 </div>
 
                 <div class="header-actions d-flex align-items-center gap-2">
-                    <!-- API Key Settings Button -->
                     <button type="button" id="apiKeyBtn" class="header-btn" title="Gemini API Key Settings" data-bs-toggle="modal" data-bs-target="#apiKeyModal">
                         <i class="bi bi-key-fill"></i>
                         <span class="d-none d-sm-inline">API Key</span>
                         <span class="key-status-dot" id="keyStatusBadge"></span>
                     </button>
-                    <!-- Clear Chat Button -->
                     <button type="button" id="clearChatBtn" class="header-btn" title="Clear Conversation">
                         <i class="bi bi-trash3"></i>
                         <span class="d-none d-sm-inline">Clear</span>
@@ -55,9 +46,7 @@
                 </div>
             </header>
 
-            <!-- Chat Message Box -->
             <main class="chat-body" id="chatBox">
-                <!-- Welcome Banner / Empty State -->
                 <div class="welcome-card text-center my-3" id="welcomeCard">
                     <div class="welcome-icon mb-3">
                         <i class="bi bi-stars"></i>
@@ -67,7 +56,6 @@
                         Powered by Google Gemini. Ask questions, explore ideas, or debug code.
                     </p>
                     
-                    <!-- Quick Prompt Suggestions -->
                     <div class="prompt-chips d-flex flex-wrap justify-content-center gap-2 mt-3">
                         <button type="button" class="prompt-chip" data-prompt="What can you do as Novis Bot?">
                             <i class="bi bi-lightbulb me-1"></i> What can you do?
@@ -81,10 +69,8 @@
                     </div>
                 </div>
 
-                <!-- Messages Container -->
                 <div class="messages-list" id="messagesList"></div>
 
-                <!-- Typing / Thinking Indicator (Hidden by default) -->
                 <div class="typing-indicator-row d-none" id="typingIndicator">
                     <div class="msg-avatar bot-avatar-small">
                         <i class="bi bi-robot"></i>
@@ -97,7 +83,6 @@
                 </div>
             </main>
 
-            <!-- Footer / Input Form -->
             <footer class="chat-footer">
                 <form id="chatForm" class="chat-input-wrapper">
                     <input 
@@ -113,14 +98,13 @@
                     </button>
                 </form>
                 <div class="footer-note text-center mt-2">
-                    <small>Novis Bot &bull; Powered by Google Gemini 1.5 Flash</small>
+                    <small>Novis Bot &bull; Powered by Google Gemini</small>
                 </div>
             </footer>
 
         </div>
     </div>
 
-    <!-- API Key Modal -->
     <div class="modal fade" id="apiKeyModal" tabindex="-1" aria-labelledby="apiKeyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content api-modal-card">
@@ -166,9 +150,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Custom Chatbot Script -->
     <script src="script.js"></script>
 </body>
 </html>
