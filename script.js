@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const keyDot = document.getElementById("keyStatusBadge");
     const statusText = document.getElementById("botStatusText");
 
-    const storageKey = "novis_bot_gemini_api_key";
+    const API_KEY = "novis_bot_gemini_api_key";
     const model = "gemini-3.5-flash";
     let history = [];
 
     function getKey() {
-        return localStorage.getItem(storageKey) || "";
+        return localStorage.getItem(API_KEY) || "";
     }
 
     function updateKeyUI() {
@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveKeyButton.addEventListener("click", () => {
         const key = keyInput.value.trim();
         if (key) {
-            localStorage.setItem(storageKey, key);
+            localStorage.setItem(API_KEY, key);
             updateKeyUI();
             if (keyModal) keyModal.hide();
             addMessage("bot", "API Key saved successfully! How can I help you today? 😊");
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     removeKeyButton.addEventListener("click", () => {
         if (confirm("Are you sure you want to remove your saved API key?")) {
-            localStorage.removeItem(storageKey);
+            localStorage.removeItem(API_KEY);
             updateKeyUI();
             if (keyModal) keyModal.hide();
             addMessage("bot", "API Key removed. You will need to provide an API key to chat with Novis Bot.", true);
